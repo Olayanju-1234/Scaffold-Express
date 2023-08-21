@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { program } = require('commander');
 const scaffoldExpress = require('./scaffold-express');
 
@@ -7,7 +9,6 @@ program
     .action((projectName) => {
         scaffoldExpress(projectName);
         console.log('Scaffolding express project', projectName);
-    }
-);
+    });
 
 program.parse(process.argv);
