@@ -1,0 +1,24 @@
+{
+  "name": "scaffold-express",
+  "version": "1.0.0",
+  "description": "Generate an Express.js project scaffold",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Olayanju-1234/Scaffold-Express.git"
+  },
+  "author": "Joseph Olayanju",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Olayanju-1234/Scaffold-Express/issues"
+  },
+  "homepage": "https://github.com/Olayanju-1234/Scaffold-Express#readme",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "ejs": "^3.1.9",
+    "fs": "^0.0.1-security"
+  }
+}
