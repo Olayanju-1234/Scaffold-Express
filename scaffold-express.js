@@ -1,6 +1,17 @@
-
 const fs = require('fs');
 const path = require('path');
+
+const { execSync } = require('child_process');
+
+const installDependencies = (projectName) => {
+  const targetPath = path.join(process.cwd(), projectName);
+
+  console.log('Installing dependencies...');
+  
+  execSync('npm install', { cwd: targetPath, stdio: 'inherit' });
+
+  console.log('Dependencies installed successfully!');
+};
 
 const scaffoldExpress = (projectName) => {
   const targetPath = path.join(process.cwd(), projectName);
@@ -13,17 +24,18 @@ const scaffoldExpress = (projectName) => {
   const componentsPath = path.join(srcPath, 'components');
   fs.mkdirSync(componentsPath);
 
-  const componentContent = `
-        const express = require('express');
+  const componentContent = 
+`
+const express = require('express');
 
-        const router = express.Router();
+const router = express.Router();
 
-        router.get('/', (req, res) => {
-            res.send('Hello World!');
-        });
+router.get('/', (req, res) => {
+    res.send('Hello World!');
+});
 
-        module.exports = router;
-    `;
+module.exports = router;
+`;
 
   const componentPath = path.join(componentsPath, 'index.js');
   fs.writeFileSync(componentPath, componentContent);
@@ -42,65 +54,69 @@ const scaffoldExpress = (projectName) => {
   const configPath = path.join(srcPath, 'config');
   fs.mkdirSync(configPath);
 
-  const databaseContent = `
-        const database = {
-            development: {
-                username: 'root',
-                password: 'password',
-                database: 'database_development',
-                host: '',
-            },
+  const databaseContent = 
+`const database = {
+  development: {
+      username: 'root',
+      password: 'password',
+      database: 'database_development',
+      host: '',
+  },
 
-            test: {
+  test: {
 
-            },
+  },
 
-            production: {
+  production: {
 
-            },
+  },
+};
 
-        };
+module.exports = database;
+`;
 
-        module.exports = database;
-    `;
   const databasePath = path.join(configPath, 'database.js');
   fs.writeFileSync(databasePath, databaseContent);
 
-  const defaultContent = `
-        {
-            "database": {
+  const defaultContent = 
+`
+{
+    "database": {
 
-            }
-        }
-    `;
+    }
+}
+`;
   const defaultPath = path.join(configPath, 'default.json');
   fs.writeFileSync(defaultPath, defaultContent);
 
-  const developmentContent = `
-        
-    `;
+  const developmentContent = 
+`
+
+`;
+
   const developmentPath = path.join(configPath, 'development.json');
   fs.writeFileSync(developmentPath, developmentContent);
 
-  const productionContent = `
+  const productionContent = 
+`
 
-    `;
+`;
+
   const productionPath = path.join(configPath, 'production.json');
   fs.writeFileSync(productionPath, productionContent);
 
-  const configIndexContent = `
-        const database = require('./database');
-        const defaultConfig = require('./default.json');
-        const developmentConfig = require('./development.json');
-        const productionConfig = require('./production.json');
+  const configIndexContent = 
+`const database = require('./database');
+const defaultConfig = require('./default.json');
+const developmentConfig = require('./development.json');
+const productionConfig = require('./production.json');
 
-        module.exports = {
-            database,
-            defaultConfig,
-            developmentConfig,
-            productionConfig,
-        };
-    `;
+module.exports = {
+    database,
+    defaultConfig,
+    developmentConfig,
+    productionConfig,
+};`;
 
   const configIndexPath = path.join(configPath, 'index.js');
   fs.writeFileSync(configIndexPath, configIndexContent);
@@ -139,73 +155,74 @@ const scaffoldExpress = (projectName) => {
   const errorsPath = path.join(srcPath, 'errors');
   fs.mkdirSync(errorsPath);
 
-  const customErrorContent = `
-        class CustomError extends Error {
-            constructor(message, statusCode) {
-                super(message);
-                this.statusCode = statusCode;
-            }
-        }
+  const customErrorContent = 
+`class CustomError extends Error {
+  constructor(message, statusCode) {
+      super(message);
+      this.statusCode = statusCode;
+  }
+}
 
-        module.exports = CustomError;
-    `;
+module.exports = CustomError;`;
+
   const customErrorPath = path.join(errorsPath, 'CustomError.js');
   fs.writeFileSync(customErrorPath, customErrorContent);
 
-  const errorsIndexContent = `
-        const CustomError = require('./CustomError');
+  const errorsIndexContent = 
+`const CustomError = require('./CustomError');
 
-        module.exports = {
-            CustomError,
-        };
-    `;
+module.exports = {
+  CustomError,
+};`;
+
   const errorsIndexPath = path.join(errorsPath, 'index.js');
   fs.writeFileSync(errorsIndexPath, errorsIndexContent);
 
   // app.js
-  const appContent = `
-        require('dotenv').config();
-        require('express-async-errors')
+  const appContent = 
+  `require('dotenv').config();
+require('express-async-errors')
 
-        const express = require('express');
-        const cors = require('cors');
-        const morgan = require('morgan');
-        const helmet = require('helmet');
-        const compression = require('compression');
-        const bodyParser = require('body-parser');
-        const cookieParser = require('cookie-parser');
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const compression = require('compression');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
-        const app = express();
+const app = express();
 
-        const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
-        app.use(cors());
-        app.use(morgan('dev'));
-        app.use(helmet());
-        app.use(compression());
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
-        app.use(cookieParser());
+app.use(cors());
+app.use(morgan('dev'));
+app.use(helmet());
+app.use(compression());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-        app.get('/', (req, res) => {
-            res.send('Hello World!');
-        });
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 
-        const start = async () => {
-            // TODO: connect to database
+const start = async () => {
+  // TODO: connect to database
 
-            app.listen(port, () => {
-                console.log(\`Listening on port \${port}\`);
-            });
-        };
+  app.listen(port, () => {
+      console.log(\`Listening on port \${port}\`);
+  });
+};
 
-        start();
-    `;
+start();`;
 
   const appPath = path.join(srcPath, 'app.js');
   fs.writeFileSync(appPath, appContent);
 
-  console.log('Scaffolding express project', projectName);
+  console.log('Creating new express project', projectName);
+
+  installDependencies(projectName);
 };
 
 module.exports = scaffoldExpress;
