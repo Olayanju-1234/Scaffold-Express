@@ -6,11 +6,11 @@ This is a simple scaffold for an Express app. It includes basic folders and file
 
 ## Installation
 
-To install this app, you will need to clone the repo and run `npm install` to install the dependencies.
+To install this app, run `npm install scaffold-express` in the terminal.
 
 ## Usage
 
-To use this app, you will need to run `node scaffold-express <project_name>` to start the server.
+To use this app, you will need to run `scaffold-express create <project_name>` to generate express project template.
 
 ## License
 
@@ -20,13 +20,9 @@ This project is licensed under the MIT license.
 
 If you would like to contribute to this project, please fork the repo and submit a pull request.
 
-## Tests
-
-To run tests, run `npm test`.
-
 ## Questions
 
-If you have any questions, please contact me at `mailto:{{ email }}`. You can also find more of my work at [{{ github_username }}](Olayanju-1234).
+If you have any questions, please contact me via mail. You can also find more of my work at [{{ github_username }}](Olayanju-1234).
 
 ## Author
 
