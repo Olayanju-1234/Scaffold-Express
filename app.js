@@ -4,11 +4,11 @@ const { program } = require('commander');
 const scaffoldExpress = require('./scaffold-express');
 
 program
+  .version('1.1.0')
   .command('scaffold-express <projectName>')
-  .description('Generate a new express project')
+  .description('Create a new Express project')
   .action((projectName) => {
     scaffoldExpress(projectName);
-    console.log('Scaffolding express project', projectName);
   });
 
 program.parse(process.argv);
