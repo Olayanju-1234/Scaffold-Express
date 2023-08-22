@@ -1,6 +1,6 @@
 {
   "name": "scaffold-express",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate an Express.js project scaffold",
   "main": "app.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "fs": "^0.0.1-security"
   },
   "bin": {
-    "scaffold-express": "./scaffold-express.js"
+    "scaffold-express": "./app.js"
   },
   "devDependencies": {
     "eslint": "^8.47.0",
