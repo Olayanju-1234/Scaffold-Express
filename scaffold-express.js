@@ -1,18 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const { execSync } = require('child_process');
-
-const installDependencies = (projectName) => {
-  const targetPath = path.join(process.cwd(), projectName);
-
-  console.log('Installing dependencies...');
-  
-  execSync('npm install', { cwd: targetPath, stdio: 'inherit' });
-
-  console.log('Dependencies installed successfully!');
-};
-
 const scaffoldExpress = (projectName) => {
   const targetPath = path.join(process.cwd(), projectName);
   fs.mkdirSync(targetPath);
@@ -24,8 +12,7 @@ const scaffoldExpress = (projectName) => {
   const componentsPath = path.join(srcPath, 'components');
   fs.mkdirSync(componentsPath);
 
-  const componentContent = 
-`
+  const componentContent = `
 const express = require('express');
 
 const router = express.Router();
@@ -54,8 +41,7 @@ module.exports = router;
   const configPath = path.join(srcPath, 'config');
   fs.mkdirSync(configPath);
 
-  const databaseContent = 
-`const database = {
+  const databaseContent = `const database = {
   development: {
       username: 'root',
       password: 'password',
@@ -78,8 +64,7 @@ module.exports = database;
   const databasePath = path.join(configPath, 'database.js');
   fs.writeFileSync(databasePath, databaseContent);
 
-  const defaultContent = 
-`
+  const defaultContent = `
 {
     "database": {
 
@@ -89,24 +74,21 @@ module.exports = database;
   const defaultPath = path.join(configPath, 'default.json');
   fs.writeFileSync(defaultPath, defaultContent);
 
-  const developmentContent = 
-`
+  const developmentContent = `
 
 `;
 
   const developmentPath = path.join(configPath, 'development.json');
   fs.writeFileSync(developmentPath, developmentContent);
 
-  const productionContent = 
-`
+  const productionContent = `
 
 `;
 
   const productionPath = path.join(configPath, 'production.json');
   fs.writeFileSync(productionPath, productionContent);
 
-  const configIndexContent = 
-`const database = require('./database');
+  const configIndexContent = `const database = require('./database');
 const defaultConfig = require('./default.json');
 const developmentConfig = require('./development.json');
 const productionConfig = require('./production.json');
@@ -125,11 +107,25 @@ module.exports = {
   const utilsPath = path.join(srcPath, 'utils');
   fs.mkdirSync(utilsPath);
 
-  const utilsFiles = ['index.js'];
-  utilsFiles.forEach((file) => {
-    const filePath = path.join(utilsPath, file);
-    fs.writeFileSync(filePath, '');
-  });
+  const loggerContent = `const logger = (req, res, next) => {
+  console.log(\`\${req.method} \${req.path}\`);
+  next();
+};
+
+module.exports = logger;
+`;
+
+  const loggerPath = path.join(utilsPath, 'logger.js');
+  fs.writeFileSync(loggerPath, loggerContent);
+
+  const utilsIndexContent = `const logger = require('./logger');
+
+module.exports = {
+  logger,
+};`;
+
+  const utilsIndexPath = path.join(utilsPath, 'index.js');
+  fs.writeFileSync(utilsIndexPath, utilsIndexContent);
 
   // services
   const servicesPath = path.join(srcPath, 'services');
@@ -145,18 +141,40 @@ module.exports = {
   const middlewaresPath = path.join(srcPath, 'middlewares');
   fs.mkdirSync(middlewaresPath);
 
-  const middlewaresFiles = ['index.js'];
-  middlewaresFiles.forEach((file) => {
-    const filePath = path.join(middlewaresPath, file);
-    fs.writeFileSync(filePath, '');
+  const errorHandlerContent = `const { CustomError } = require('../errors');
+
+const errorHandler = (err, req, res, next) => {
+  if (err instanceof CustomError) {
+    return res.status(err.statusCode).json({
+      message: err.message,
+    });
+  }
+
+  return res.status(500).json({
+    message: 'Something went wrong',
   });
+};
+
+module.exports = errorHandler;
+`;
+
+  const errorHandlerPath = path.join(middlewaresPath, 'errorHandler.js');
+  fs.writeFileSync(errorHandlerPath, errorHandlerContent);
+
+  const middlewaresIndexContent = `const errorHandler = require('./errorHandler');
+
+module.exports = {
+  errorHandler,
+};`;
+
+  const middlewaresIndexPath = path.join(middlewaresPath, 'index.js');
+  fs.writeFileSync(middlewaresIndexPath, middlewaresIndexContent);
 
   // errors
   const errorsPath = path.join(srcPath, 'errors');
   fs.mkdirSync(errorsPath);
 
-  const customErrorContent = 
-`class CustomError extends Error {
+  const customErrorContent = `class CustomError extends Error {
   constructor(message, statusCode) {
       super(message);
       this.statusCode = statusCode;
@@ -168,8 +186,7 @@ module.exports = CustomError;`;
   const customErrorPath = path.join(errorsPath, 'CustomError.js');
   fs.writeFileSync(customErrorPath, customErrorContent);
 
-  const errorsIndexContent = 
-`const CustomError = require('./CustomError');
+  const errorsIndexContent = `const CustomError = require('./CustomError');
 
 module.exports = {
   CustomError,
@@ -179,8 +196,7 @@ module.exports = {
   fs.writeFileSync(errorsIndexPath, errorsIndexContent);
 
   // app.js
-  const appContent = 
-  `require('dotenv').config();
+  const appContent = `require('dotenv').config();
 require('express-async-errors')
 
 const express = require('express');
@@ -220,9 +236,50 @@ start();`;
   const appPath = path.join(srcPath, 'app.js');
   fs.writeFileSync(appPath, appContent);
 
+  // package.json
+  const packageJsonContent = `{
+  "name": "${projectName}",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "cors": "^2.8.5",
+    "morgan": "^1.10.0",
+    "helmet": "^4.6.0",
+    "compression": "^1.7.4",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^10.0.0",
+    "express-async-errors": "^3.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}
+`;
+
+  const packageJsonPath = path.join(targetPath, 'package.json');
+  fs.writeFileSync(packageJsonPath, packageJsonContent);
+
   console.log('Creating new express project', projectName);
 
-  installDependencies(projectName);
+  console.log('Installing dependencies...');
+
+  const { execSync } = require('child_process');
+  execSync('npm install', { cwd: targetPath });
+
+  console.log('Done!');
+
+  console.log('To start the server, run:');
+  console.log(`1. cd ${projectName}`);
+  console.log('2. npm run dev');
 };
 
 module.exports = scaffoldExpress;
